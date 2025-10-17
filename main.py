@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import pypdfium2 as pdfium
 from pathlib import Path
-from ultralytics import YOLO
+#from ultralytics import YOLO
 from PIL import Image
 from transformers import RTDetrV2ForObjectDetection, RTDetrImageProcessor
 import torch
@@ -56,6 +56,7 @@ def translated_text_img(img):
     img = text_img_creator.create_text_image(text,w,h,bcolor,fcolor)
     return img
 
+"""
 def replace_in_page(results):
     boxes = results[0].boxes
     names = results[0].names
@@ -81,6 +82,7 @@ def detect_layout(img):
     #img = preprocessor.preprocess_image(img)
     results = model(img, device="cpu")  # Force CPU
     return results
+"""
 
 classes_map = {
     0: "Caption",
@@ -135,7 +137,7 @@ def pdf_page_to_img(page):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     return image
 
-i=10
+i=0
 while True:
     try:
         page = pdf[i]
