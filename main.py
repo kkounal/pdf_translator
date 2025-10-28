@@ -3,18 +3,22 @@ import numpy as np
 import pypdfium2 as pdfium
 from pathlib import Path
 from PIL import Image
+import argparse
 
 root = "."  # take the current directory as root
 [f.unlink() for f in Path(str(Path(root)) + '/temp_pages/').glob("*") if f.is_file()]
 
 pdf = None
 pdf_name = ""
-for path in Path(root).glob("**/*.pdf"):
-    answer = input(f"Select {path} for processing y/n?")
-    if answer.lower()[0] == "y":
-        pdf = pdfium.PdfDocument(path)
-        pdf_name = Path(path).stem
-        break
+
+parser = argparse.ArgumentParser(description='PDF translator')
+parser.add_argument('-f','--file', help='Path to pdf file to translate', required=True)
+args = vars(parser.parse_args())
+
+
+if args['file'].split(".")[1] == "pdf":
+    pdf_name = Path(args['file']).stem
+    pdf = pdfium.PdfDocument(args['file'])
 
 if pdf is None:
     print("Didn't find any pdfs or those found were not selected, exiting")
@@ -80,9 +84,9 @@ def translated_text_img(img):
 
 def replace_in_page(img,results):
     confidence_scores, labels, boxes, text_labels = layout_analyser.results_interpreter(results)
-    to_replace = []
+    to_replace = [] #replace as a second step, as it;s possibel for the ocr to read the same region twice in the edge case the layout detect sees boxes inside other boxes
     for score, label, box in zip(confidence_scores, labels, boxes):
-        if label in text_labels:
+        if label in text_labels and score > 0.7:
             x1,y1,x2,y2 = int(box[0]),int(box[1]),int(box[2]),int(box[3]),
             to_replace.append((translated_text_img(img[y1:y2, x1:x2]),x1,y1,x2,y2))
     for img_patch,x1,y1,x2,y2 in to_replace:

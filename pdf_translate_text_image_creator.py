@@ -2,14 +2,13 @@ from PIL import Image, ImageDraw, ImageFont
 import cv2
 import numpy as np
 
-def create_text_image(text,width,height,cfill = "#ffffff",cfont=(0,0,0)):
+def create_text_image(text,width,height,cfill = "#ffffff",cfont=(0,0,0),font_path = "ArialGreekRegular.ttf"):
     im =  Image.new(mode="RGB", size=(width, height))
     draw = ImageDraw.Draw(im, "RGB")
     draw.rectangle([(0, 0), (width, height)], fill = cfill)
     text_width = width
     text_max_height = height
     size = 36
-    font_path = "ArialGreekRegular.ttf"
     font = ImageFont.truetype(font_path, size, layout_engine=ImageFont.Layout.BASIC)
     while size > 1:
         lines = []
