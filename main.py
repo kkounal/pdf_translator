@@ -40,6 +40,29 @@ if pdf is None:
 #-------------------------------------------
 
 
+colors = {
+        0:  (4, 42, 255),
+        1: 	(11, 219, 235),
+        2: 	(243, 243, 243),
+        3: 	(0, 223, 183),
+        4: 	(17, 31, 104),
+        5: 	(255, 111, 221),
+        6: 	(255, 68, 79),
+        7: 	(204, 237, 0),
+        8: 	(0, 243, 68),
+        9:  (189, 0, 255),
+        10: (0, 180, 255),
+        11: (221, 0, 186),
+        12: (0, 255, 255),
+        13: (38, 192, 0),
+        14: (1, 255, 179),
+        15: (125, 36, 255),
+        16: (123, 0, 104),
+        17: (255, 27, 108),
+        18: (252, 109, 47),
+        19: (162, 255, 11)
+}
+
 import pdf_translate_doc_layout_analyser as layout_analyser
 import pdf_translate_ocr as ocr
 import pdf_translate_preprocessor as preprocessor
@@ -55,17 +78,27 @@ def translated_text_img(img):
     img = text_img_creator.create_text_image(text,w,h,bcolor,fcolor)
     return img
 
-def replace_in_page(results):
+def replace_in_page(img,results):
     confidence_scores, labels, boxes, text_labels = layout_analyser.results_interpreter(results)
+    to_replace = []
     for score, label, box in zip(confidence_scores, labels, boxes):
-        print(score)
-        print(label)
-        print(box)
         if label in text_labels:
             x1,y1,x2,y2 = int(box[0]),int(box[1]),int(box[2]),int(box[3]),
-            img[y1:y2, x1:x2] = translated_text_img(img[y1:y2, x1:x2]) #translate text regions
+            to_replace.append((translated_text_img(img[y1:y2, x1:x2]),x1,y1,x2,y2))
+    for img_patch,x1,y1,x2,y2 in to_replace:
+        img[y1:y2, x1:x2] = img_patch #translate text regions
     return img
 
+def detect_layout_debug(img,results): 
+    categories = []
+    confidence_scores, labels, boxes, text_labels = layout_analyser.results_interpreter(results)
+    for score, label, box in zip(confidence_scores, labels, boxes):
+        if label not in categories:
+            categories.append(label)
+        x1,y1,x2,y2 = int(box[0]),int(box[1]),int(box[2]),int(box[3]),
+        img = cv2.rectangle(img, (x1, y1), (x2, y2), (36,255,12), 1)
+        cv2.putText(img, label + " conf:" + str(round(score,2)), (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, colors[categories.index(label)], 2)
+    return img
 
 def pdf_page_to_img(page):
     image = page.render(scale=4).to_pil()
@@ -78,7 +111,8 @@ import zoom
 i = 18
 page = pdf[i]
 img = pdf_page_to_img(page)
-img = replace_in_page(layout_analyser.detect_layout(img))
+img = replace_in_page(img,layout_analyser.detect_layout(img))
+#img = detect_layout_debug(img,layout_analyser.detect_layout(img))
 cv2.imwrite(f'temp_pages/page_{i}.png', img)
 zoom.show_my_img(img)
 

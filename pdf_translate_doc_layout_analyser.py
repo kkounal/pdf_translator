@@ -49,8 +49,9 @@ def detect_layout(img):
     with torch.no_grad():
         outputs = model(**inputs)
     results = image_processor.post_process_object_detection(outputs,target_sizes=torch.tensor([image.size[::-1]]),threshold=0.6,)
-    return results
     
+    return results
+
 
 """
 from ultralytics import YOLO
