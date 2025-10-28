@@ -90,6 +90,7 @@ def replace_in_page(img,results):
             x1,y1,x2,y2 = int(box[0]),int(box[1]),int(box[2]),int(box[3]),
             to_replace.append((translated_text_img(img[y1:y2, x1:x2]),x1,y1,x2,y2))
     for img_patch,x1,y1,x2,y2 in to_replace:
+        zoom.show_my_img(img)
         img[y1:y2, x1:x2] = img_patch #translate text regions
     return img
 
