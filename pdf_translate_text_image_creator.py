@@ -6,12 +6,12 @@ def create_text_image(text,width,height,cfill = "#ffffff",cfont=(0,0,0)):
     im =  Image.new(mode="RGB", size=(width, height))
     draw = ImageDraw.Draw(im, "RGB")
     draw.rectangle([(0, 0), (width, height)], fill = cfill)
-    text_width = width * 0.8
-    text_max_height = height * 0.8
+    text_width = width
+    text_max_height = height
     size = 36
+    font_path = "ArialGreekRegular.ttf"
+    font = ImageFont.truetype(font_path, size, layout_engine=ImageFont.Layout.BASIC)
     while size > 1:
-        font_path = "ArialGreekRegular.ttf"
-        font = ImageFont.truetype(font_path, size, layout_engine=ImageFont.Layout.BASIC)
         lines = []
         line = ""
         for word in text.split():
@@ -28,7 +28,9 @@ def create_text_image(text,width,height,cfill = "#ffffff",cfont=(0,0,0)):
                 line = word
         if line:
             lines.append(line)
+
         text = "\n".join(lines)
+
         x1, y1, x2, y2 = draw.multiline_textbbox((0, 0), text, font, stroke_width=2)
         w, h = x2 - x1, y2 - y1
         if h <= text_max_height:
