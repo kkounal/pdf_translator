@@ -58,6 +58,9 @@ def translated_text_img(img):
 def replace_in_page(results):
     confidence_scores, labels, boxes, text_labels = layout_analyser.results_interpreter(results)
     for score, label, box in zip(confidence_scores, labels, boxes):
+        print(score)
+        print(label)
+        print(box)
         if label in text_labels:
             x1,y1,x2,y2 = int(box[0]),int(box[1]),int(box[2]),int(box[3]),
             img[y1:y2, x1:x2] = translated_text_img(img[y1:y2, x1:x2]) #translate text regions

@@ -34,7 +34,7 @@ def results_interpreter(results):
             label = classes_map[label_id.item()]
             box = [round(i, 2) for i in box.tolist()]
             confidence_scores.append(score)
-            labels.append(labels)
+            labels.append(label)
             boxes.append(box)
 
     return confidence_scores, labels, boxes, text_labels
