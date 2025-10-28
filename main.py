@@ -76,7 +76,10 @@ import pdf_translate_text_image_creator as text_img_creator
 
 def translated_text_img(img):
     pimg,bcolor,fcolor = preprocessor.find_image_colors(img)
-    text = ocr.ocr_text(preprocessor.preprocess_image(pimg))
+    text = ocr.ocr_text(pimg)
+    print(text)
+    print("----")
+    
     text = translator.translate_text(preprocessor.split_into_sentences(text))
     h,w,_ = img.shape
     img = text_img_creator.create_text_image(text,w,h,bcolor,fcolor)
@@ -90,7 +93,7 @@ def replace_in_page(img,results):
             x1,y1,x2,y2 = int(box[0]),int(box[1]),int(box[2]),int(box[3]),
             to_replace.append((translated_text_img(img[y1:y2, x1:x2]),x1,y1,x2,y2))
     for img_patch,x1,y1,x2,y2 in to_replace:
-        zoom.show_my_img(img)
+        #zoom.show_my_img(img)
         img[y1:y2, x1:x2] = img_patch #translate text regions
     return img
 

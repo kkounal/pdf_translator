@@ -32,18 +32,6 @@ def create_text_image(text,width,height,cfill = (255,255,255),cfont=(0,0,0),font
         x1, y1, x2, y2 = draw.multiline_textbbox((0, 0), text, font, stroke_width=0.7)
         w, h = x2 - x1, y2 - y1
 
-        '''
-        temp = im.copy()
-        draw_t = ImageDraw.Draw(temp, "RGB")
-        draw_t.rectangle([(0, 0), (width, height)], fill = (255,255,255))
-        draw_t.multiline_text((width / 2 - w / 2 - x1, height / 2 - h / 2 - y1), text, font=font, align="left", stroke_width=0.7, fill=(0,0,0))
-        gray = cv2.cvtColor(np.array(temp), cv2.COLOR_BGR2GRAY)
-        cv2_t = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY)[1]
-        rowSums = np.sum(cv2_t[[0,-1], :]-255, axis=1)
-        threshold = cv2_t.shape[0] * 255
-        if rowSums[0] > threshold or rowSums[-1] > threshold:
-            break
-        '''
         if int(h) <= height:
             break
         else:
